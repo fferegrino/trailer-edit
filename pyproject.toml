@@ -6,6 +6,7 @@ readme = "readme.md"
 requires-python = ">=3.10"
 dependencies = [
     "ffmpeg-python>=0.2.0",
+    "flask>=3.1.0",
     "scenedetect[opencv]>=0.6.6",
 ]
 
