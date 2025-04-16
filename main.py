@@ -1,5 +1,6 @@
 import shutil
 from pathlib import Path
+import numpy as np
 
 import cv2
 import ffmpeg
@@ -56,10 +57,29 @@ for scene in detected_scenes:
         scene["frame_end"] - FRAME_BUFFER,
     ]
 
+    captured_frames = []
     for frame_idx, frame in enumerate(frames):
         cap.set(cv2.CAP_PROP_POS_FRAMES, frame)
         ret, captured_frame = cap.read()
-        cv2.imwrite(
-            str(image_folder / f"{scene['scene_id']:0{digit_count}d}_{frame_idx:02d}.jpg"),
-            captured_frame,
-        )
+        captured_frames.append(captured_frame)
+
+    red_line = np.ones((
+        captured_frames[0].shape[0],
+        20,
+        3,
+    ))
+    red_line[:, :, 0] = 0
+    red_line[:, :, 1] = 0
+    red_line[:, :, 2] = 255
+
+    combined_frame = np.hstack([
+        captured_frames[0],
+        red_line,
+        captured_frames[1],
+        red_line,
+        captured_frames[2],
+    ])
+    cv2.imwrite(
+        str(image_folder / f"{scene['scene_id']:0{digit_count}d}.jpg"),
+        combined_frame,
+    )
