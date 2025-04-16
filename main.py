@@ -1,8 +1,10 @@
-from scenedetect import detect, ContentDetector
-from pathlib import Path
-import ffmpeg
 import shutil
+from pathlib import Path
+
 import cv2
+import ffmpeg
+from scenedetect import ContentDetector, detect
+
 OUTPUT_FOLDER = ".output"
 BUFFER = 0.045
 FRAME_BUFFER = 12
