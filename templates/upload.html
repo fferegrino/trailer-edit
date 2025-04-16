@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload Video - Scene Selection</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100">
+    <div class="container mx-auto px-4 py-8">
+        <div class="max-w-2xl mx-auto">
+            <h1 class="text-3xl font-bold mb-8 text-center">Upload Video</h1>
+            
+            <div class="bg-white p-8 rounded-lg shadow-md">
+                <form id="upload-form" class="space-y-6">
+                    <div class="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center" id="drop-zone">
+                        <p class="text-gray-500 mb-4">Drag and drop your video here or</p>
+                        <label class="inline-block">
+                            <span class="bg-blue-500 text-white px-6 py-2 rounded cursor-pointer hover:bg-blue-600">Select Video</span>
+                            <input type="file" id="video-input" accept="video/*" class="hidden">
+                        </label>
+                        <p class="text-sm text-gray-500 mt-4">Supported formats: MP4, MOV, AVI</p>
+                    </div>
+
+                    <div id="upload-progress" class="hidden">
+                        <div class="w-full bg-gray-200 rounded-full h-2.5">
+                            <div class="bg-blue-500 h-2.5 rounded-full" style="width: 0%"></div>
+                        </div>
+                        <p class="text-sm text-gray-500 mt-2 text-center" id="progress-text">Uploading...</p>
+                    </div>
+
+                    <div class="text-center">
+                        <button type="submit" class="bg-green-500 text-white px-6 py-2 rounded-lg shadow-md hover:bg-green-600 disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                            Upload Video
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const form = document.getElementById('upload-form');
+            const dropZone = document.getElementById('drop-zone');
+            const fileInput = document.getElementById('video-input');
+            const submitButton = form.querySelector('button[type="submit"]');
+            const progressBar = document.querySelector('#upload-progress .bg-blue-500');
+            const progressText = document.getElementById('progress-text');
+            const progressContainer = document.getElementById('upload-progress');
+
+            // Handle file selection
+            function handleFileSelect(file) {
+                if (file && file.type.startsWith('video/')) {
+                    submitButton.disabled = false;
+                    dropZone.classList.add('border-blue-500');
+                    dropZone.querySelector('p').textContent = `Selected: ${file.name}`;
+                } else {
+                    submitButton.disabled = true;
+                    dropZone.classList.remove('border-blue-500');
+                    dropZone.querySelector('p').textContent = 'Please select a valid video file';
+                }
+            }
+
+            // File input change
+            fileInput.addEventListener('change', (e) => {
+                if (e.target.files.length > 0) {
+                    handleFileSelect(e.target.files[0]);
+                }
+            });
+
+            // Drag and drop handlers
+            dropZone.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                dropZone.classList.add('border-blue-500');
+            });
+
+            dropZone.addEventListener('dragleave', () => {
+                dropZone.classList.remove('border-blue-500');
+            });
+
+            dropZone.addEventListener('drop', (e) => {
+                e.preventDefault();
+                dropZone.classList.remove('border-blue-500');
+                if (e.dataTransfer.files.length > 0) {
+                    fileInput.files = e.dataTransfer.files;
+                    handleFileSelect(e.dataTransfer.files[0]);
+                }
+            });
+
+            // Form submission
+            form.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const file = fileInput.files[0];
+                if (!file) return;
+
+                const formData = new FormData();
+                formData.append('video', file);
+
+                progressContainer.classList.remove('hidden');
+                submitButton.disabled = true;
+
+                try {
+                    const response = await fetch('/upload-video', {
+                        method: 'POST',
+                        body: formData
+                    });
+
+                    if (response.ok) {
+                        const data = await response.json();
+                        window.location.href = '/scenes';
+                    } else {
+                        throw new Error('Upload failed');
+                    }
+                } catch (error) {
+                    progressText.textContent = 'Upload failed. Please try again.';
+                    submitButton.disabled = false;
+                }
+            });
+        });
+    </script>
+</body>
+</html> 
