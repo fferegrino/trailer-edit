@@ -52,17 +52,23 @@ document.addEventListener('DOMContentLoaded', () => {
                     <input type="text" 
                            class="group-name text-lg font-semibold bg-transparent border-b border-gray-300 focus:border-blue-500 focus:outline-none px-1" 
                            placeholder="Group Name"
-                           value="${groupData ? groupData.name || '' : ''}"
+                           value="${groupData ? groupData.name || groupId : groupId}"
                     >
                 </div>
                 <button class="delete-group text-red-500 hover:text-red-700">Delete Group</button>
             </div>
             <div class="group-content min-h-[100px]"></div>
+            <button class="download-group text-green-500 hover:text-green-700">Download Group</button>
         `;
 
         group.element.querySelector('.delete-group').addEventListener('click', () => {
             group.element.remove();
             groups = groups.filter(g => g.id !== groupId);
+        });
+
+        group.element.querySelector('.download-group').addEventListener('click', () => {
+            const groupName = group.element.querySelector('.group-name').value;
+            window.location.href = `/download-group/${groupName}`;
         });
 
         groups.push(group);
@@ -120,6 +126,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     saveGroupsButton.classList.remove('bg-green-500');
                     saveGroupsButton.classList.add('bg-blue-500');
                 }, 2000);
+
+                
             }
         })
         .catch(error => console.error('Error:', error));

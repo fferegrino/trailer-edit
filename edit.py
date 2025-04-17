@@ -43,7 +43,6 @@ def extract_scenes(video_path, folders):
             preset="ultrafast",
         ).run(overwrite_output=True)
 
-
         cap = cv2.VideoCapture(scene_video_path)
 
         frames = [
@@ -74,10 +73,10 @@ def extract_scenes(video_path, folders):
             combined_frame = np.vstack(
                 [
                     captured_frames[0],
-                black_line,
-                captured_frames[1],
-            ]
-        )
+                    black_line,
+                    captured_frames[1],
+                ]
+            )
         # Resize to 500x500
         combined_frame = cv2.resize(combined_frame, (500, 500))
         cv2.imwrite(

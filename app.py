@@ -98,6 +98,11 @@ def serve_image(filename):
     return send_from_directory(app.config["FOLDERS"]["scene_images"], filename)
 
 
+@app.route("/download-group/<group_name>")
+def download_group(group_name):
+    return send_from_directory(app.config["FOLDERS"]["generated_videos"], f"{group_name}.mp4", as_attachment=True)
+
+
 @app.route("/save-groups", methods=["POST"])
 def save_groups():
     groups = request.json
