@@ -6,10 +6,11 @@
     <title>Image Grouping App</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <script src="https://unpkg.com/masonry-layout@4.2.2/dist/masonry.pkgd.min.js"></script>
 </head>
 <body class="bg-gray-100">
     <div class="container mx-auto px-4 py-8">
-        <div class="flex justify-between items-center mb-8">
+        <div class="flex justify-between items-center mb-4">
             <h1 class="text-3xl font-bold">Image Grouping App</h1>
             <button id="save-groups" class="bg-blue-500 text-white px-6 py-2 rounded-lg shadow-md hover:bg-blue-600 flex items-center">
                 <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -20,19 +21,21 @@
         </div>
         
         <!-- Images Gallery -->
-        <div id="images-gallery" class="bg-white p-8 rounded-lg shadow-md mb-8">
-            <h2 class="text-xl font-semibold mb-4">Available Images</h2>
-            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2">
+        <div id="images-gallery" class="bg-white p-4 rounded-lg shadow-md mb-4">
+            <div id="masonry-grid" class="masonry-grid">
                 {% for image in images %}
-                <div class="image-container draggable" draggable="true" data-image-url="{{ image.url }}">
-                    <img src="{{ image.url }}" alt="{{ image.filename }}">
+                <div class="masonry-item">
+                    <div class="image-container draggable" draggable="true" data-image-url="{{ image.url }}">
+                        <img src="{{ image.url }}" alt="{{ image.filename }}">
+                        <span class="scene-id">{{ image.scene_id }}</span>
+                    </div>
                 </div>
                 {% endfor %}
             </div>
         </div>
 
         <!-- Groups Container -->
-        <div id="groups-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div id="groups-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
             <!-- Groups will be added here dynamically -->
         </div>
 

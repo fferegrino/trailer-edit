@@ -3,6 +3,38 @@ document.addEventListener('DOMContentLoaded', () => {
     const addGroupButton = document.getElementById('add-group');
     const saveGroupsButton = document.getElementById('save-groups');
     let groups = [];
+    let masonry;
+
+    // Initialize Masonry
+    function initMasonry() {
+        const grid = document.getElementById('masonry-grid');
+        masonry = new Masonry(grid, {
+            itemSelector: '.masonry-item',
+            columnWidth: '.masonry-item',
+            percentPosition: true,
+            gutter: 8
+        });
+
+        // Layout Masonry after images load
+        const images = grid.getElementsByTagName('img');
+        let loadedImages = 0;
+        
+        Array.from(images).forEach(img => {
+            if (img.complete) {
+                loadedImages++;
+                if (loadedImages === images.length) {
+                    masonry.layout();
+                }
+            } else {
+                img.addEventListener('load', () => {
+                    loadedImages++;
+                    if (loadedImages === images.length) {
+                        masonry.layout();
+                    }
+                });
+            }
+        });
+    }
 
     // Create a new group
     function createGroup(groupData = null) {
@@ -16,7 +48,13 @@ document.addEventListener('DOMContentLoaded', () => {
         group.element.className = 'group';
         group.element.innerHTML = `
             <div class="group-header flex justify-between items-center mb-4">
-                <h3 class="text-lg font-semibold">Group ${groups.length + 1}</h3>
+                <div class="flex items-center space-x-2">
+                    <input type="text" 
+                           class="group-name text-lg font-semibold bg-transparent border-b border-gray-300 focus:border-blue-500 focus:outline-none px-1" 
+                           placeholder="Group Name"
+                           value="${groupData ? groupData.name || '' : ''}"
+                    >
+                </div>
                 <button class="delete-group text-red-500 hover:text-red-700">Delete Group</button>
             </div>
             <div class="group-content min-h-[100px]"></div>
@@ -51,6 +89,9 @@ document.addEventListener('DOMContentLoaded', () => {
         createGroup();
     }
 
+    // Initialize Masonry
+    initMasonry();
+
     // Add group button handler
     addGroupButton.addEventListener('click', () => createGroup());
 
@@ -58,6 +99,7 @@ document.addEventListener('DOMContentLoaded', () => {
     saveGroupsButton.addEventListener('click', () => {
         const groupsData = groups.map(group => ({
             id: group.id,
+            name: group.element.querySelector('.group-name').value || `Group ${groups.indexOf(group) + 1}`,
             images: group.images.map(img => img.getAttribute('data-image-url'))
         }));
 
@@ -138,6 +180,7 @@ document.addEventListener('DOMContentLoaded', () => {
         imageContainer.setAttribute('data-image-url', imageUrl);
         imageContainer.innerHTML = `
             <img src="${imageUrl}" alt="Grouped image">
+            <div class="scene-id">${imageUrl.split('/').pop().split('.')[0]}</div>
             <div class="remove-btn">×</div>
         `;
 

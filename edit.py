@@ -11,15 +11,7 @@ BUFFER = 0.045
 FRAME_BUFFER = 12
 
 
-def extract_scenes(video_path, output_folder):
-
-    output_folder = Path(output_folder)
-
-    output_folder.mkdir(parents=True, exist_ok=True)
-    image_folder = output_folder / "images"
-    image_folder.mkdir(parents=True, exist_ok=True)
-    video_folder = output_folder / "videos"
-    video_folder.mkdir(parents=True, exist_ok=True)
+def extract_scenes(video_path, folders):
 
     scenes = detect(video_path, ContentDetector())
     cap = cv2.VideoCapture(video_path)
@@ -43,7 +35,7 @@ def extract_scenes(video_path, output_folder):
             ss=scene["second_start"],
             t=scene["second_end"] - scene["second_start"],
         ).output(
-            str(video_folder / f"{scene['scene_id']:0{digit_count}d}.mp4"),
+            str(folders["scene_videos"] / f"{scene['scene_id']:0{digit_count}d}.mp4"),
             loglevel="error",
             vcodec="libx264",
             crf=23,
@@ -52,38 +44,35 @@ def extract_scenes(video_path, output_folder):
 
         frames = [
             scene["frame_start"] + FRAME_BUFFER,
-            int((scene["frame_start"] + scene["frame_end"]) / 2),
+            # int((scene["frame_start"] + scene["frame_end"]) / 2),
             scene["frame_end"] - FRAME_BUFFER,
         ]
 
         captured_frames = []
-        for frame_idx, frame in enumerate(frames):
+        for frame in frames:
             cap.set(cv2.CAP_PROP_POS_FRAMES, frame)
-            ret, captured_frame = cap.read()
+            _, captured_frame = cap.read()
             captured_frames.append(captured_frame)
 
-        red_line = np.ones(
+        black_line = np.zeros(
             (
-                captured_frames[0].shape[0],
                 20,
+                captured_frames[0].shape[1],
                 3,
             )
         )
-        red_line[:, :, 0] = 0
-        red_line[:, :, 1] = 0
-        red_line[:, :, 2] = 255
 
-        combined_frame = np.hstack(
+        combined_frame = np.vstack(
             [
                 captured_frames[0],
-                red_line,
+                black_line,
                 captured_frames[1],
-                red_line,
-                captured_frames[2],
             ]
         )
+        # Resize to 500x500
+        combined_frame = cv2.resize(combined_frame, (500, 500))
         cv2.imwrite(
-            str(image_folder / f"{scene['scene_id']:0{digit_count}d}.jpg"),
+            str(folders["scene_images"] / f"{scene['scene_id']:0{digit_count}d}.jpg"),
             combined_frame,
         )
 
