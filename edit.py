@@ -7,8 +7,8 @@ import numpy as np
 from scenedetect import ContentDetector, detect
 
 OUTPUT_FOLDER = ".output"
-BUFFER = 0.045
-FRAME_BUFFER = 12
+BUFFER = 0.1
+FRAME_BUFFER = 0
 
 
 def extract_scenes(video_path, folders):
@@ -30,29 +30,35 @@ def extract_scenes(video_path, folders):
     digit_count = len(str(len(detected_scenes)))
 
     for scene in detected_scenes:
+        scene_video_path = str(folders["scene_videos"] / f"{scene['scene_id']:0{digit_count}d}.mp4")
         ffmpeg.input(
             video_path,
             ss=scene["second_start"],
             t=scene["second_end"] - scene["second_start"],
         ).output(
-            str(folders["scene_videos"] / f"{scene['scene_id']:0{digit_count}d}.mp4"),
+            scene_video_path,
             loglevel="error",
             vcodec="libx264",
             crf=23,
             preset="ultrafast",
         ).run(overwrite_output=True)
 
+
+        cap = cv2.VideoCapture(scene_video_path)
+
         frames = [
-            scene["frame_start"] + FRAME_BUFFER,
-            # int((scene["frame_start"] + scene["frame_end"]) / 2),
-            scene["frame_end"] - FRAME_BUFFER,
+            0,
+            cap.get(cv2.CAP_PROP_FRAME_COUNT) - 1,
         ]
 
         captured_frames = []
         for frame in frames:
             cap.set(cv2.CAP_PROP_POS_FRAMES, frame)
-            _, captured_frame = cap.read()
-            captured_frames.append(captured_frame)
+            ret, captured_frame = cap.read()
+            if ret:
+                captured_frames.append(captured_frame)
+            else:
+                print(f"Failed to read frame {frame}")
 
         black_line = np.zeros(
             (
@@ -62,9 +68,12 @@ def extract_scenes(video_path, folders):
             )
         )
 
-        combined_frame = np.vstack(
-            [
-                captured_frames[0],
+        if len(captured_frames) == 1:
+            combined_frame = captured_frames[0]
+        else:
+            combined_frame = np.vstack(
+                [
+                    captured_frames[0],
                 black_line,
                 captured_frames[1],
             ]
