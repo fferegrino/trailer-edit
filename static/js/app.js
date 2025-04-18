@@ -2,8 +2,37 @@ document.addEventListener('DOMContentLoaded', () => {
     const groupsContainer = document.getElementById('groups-container');
     const addGroupButton = document.getElementById('add-group');
     const saveGroupsButton = document.getElementById('save-groups');
+    const imageModal = document.getElementById('image-modal');
+    const modalImage = document.getElementById('modal-image');
+    const closeModal = document.getElementById('close-modal');
     let groups = [];
     let masonry;
+
+    // Modal functionality
+    function openModal(imageUrl) {
+        modalImage.src = imageUrl;
+        imageModal.classList.remove('hidden');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeModalHandler() {
+        imageModal.classList.add('hidden');
+        document.body.style.overflow = '';
+    }
+
+    closeModal.addEventListener('click', closeModalHandler);
+    imageModal.addEventListener('click', (e) => {
+        if (e.target === imageModal) {
+            closeModalHandler();
+        }
+    });
+
+    // Close modal with Escape key
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && !imageModal.classList.contains('hidden')) {
+            closeModalHandler();
+        }
+    });
 
     // Initialize Masonry
     function initMasonry() {
@@ -144,6 +173,15 @@ document.addEventListener('DOMContentLoaded', () => {
         imageContainer.addEventListener('dragend', () => {
             imageContainer.classList.remove('dragging');
         });
+
+        // Add click handler for opening modal
+        imageContainer.addEventListener('click', (e) => {
+            // Don't open modal if clicking remove button or dragging
+            const imageUrl = imageContainer.getAttribute('data-image-url');
+            if (!e.target.classList.contains('remove-btn') && !imageContainer.classList.contains('dragging')) {
+                openModal(imageUrl);
+            }
+        });
     });
 
     // Function to set up drag and drop for a group
@@ -192,6 +230,14 @@ document.addEventListener('DOMContentLoaded', () => {
             <div class="scene-id">${imageUrl.split('/').pop().split('.')[0]}</div>
             <div class="remove-btn">×</div>
         `;
+
+        // Add click handler for opening modal
+        imageContainer.addEventListener('click', (e) => {
+            // Don't open modal if clicking remove button or dragging
+            if (!e.target.classList.contains('remove-btn') && !imageContainer.classList.contains('dragging')) {
+                openModal(imageUrl);
+            }
+        });
 
         group.images.push(imageContainer);
         const groupContent = group.element.querySelector('.group-content');

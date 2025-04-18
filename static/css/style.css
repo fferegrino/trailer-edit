@@ -40,6 +40,7 @@
     /* break-inside: avoid; */
     border-radius: 0.25rem;
     border: 1px solid #ccc;
+    cursor: pointer;
 }
 
 .image-container img {
@@ -77,6 +78,10 @@
 
 .image-container:hover .remove-btn {
     opacity: 1;
+}
+
+.image-container.dragging {
+    cursor: move;
 }
 
 #drop-zone.drag-over {
