@@ -42,7 +42,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const group = {
             id: groupId,
             element: document.createElement('div'),
-            images: []
+            images: [],
+            masonry: null
         };
 
         group.element.className = 'group';
@@ -193,12 +194,37 @@ document.addEventListener('DOMContentLoaded', () => {
         `;
 
         group.images.push(imageContainer);
-        group.element.querySelector('.group-content').appendChild(imageContainer);
+        const groupContent = group.element.querySelector('.group-content');
+        groupContent.appendChild(imageContainer);
+
+        // Initialize or reinitialize Masonry for the group
+        if (group.masonry) {
+            group.masonry.destroy();
+        }
+        group.masonry = new Masonry(groupContent, {
+            itemSelector: '.image-container',
+            columnWidth: '.image-container',
+            percentPosition: true,
+            gutter: 8
+        });
+
+        // Layout Masonry after image loads
+        const img = imageContainer.querySelector('img');
+        if (img.complete) {
+            group.masonry.layout();
+        } else {
+            img.addEventListener('load', () => {
+                group.masonry.layout();
+            });
+        }
 
         // Remove image handler
         imageContainer.querySelector('.remove-btn').addEventListener('click', () => {
             imageContainer.remove();
             group.images = group.images.filter(img => img !== imageContainer);
+            if (group.masonry) {
+                group.masonry.layout();
+            }
         });
 
         // Drag and drop handlers for images

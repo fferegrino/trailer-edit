@@ -34,8 +34,8 @@
 /* Image Container */
 .image-container {
     position: relative;
-    width: 100px;
-    height: 100px;
+    width: 80px;
+    height: 80px;
     margin-bottom: 8px;
     /* break-inside: avoid; */
     border-radius: 0.25rem;
@@ -82,4 +82,15 @@
 #drop-zone.drag-over {
     background: #f0f9ff;
     border-color: #3b82f6;
+}
+
+.group-content {
+    display: flex;
+    width: auto;
+    margin-bottom: 1rem;
+}
+
+.group-content .image-container {
+    background-clip: padding-box;
+    margin-right: 8px;
 } 
