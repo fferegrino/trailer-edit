@@ -41,7 +41,7 @@ document.addEventListener('DOMContentLoaded', () => {
             itemSelector: '.masonry-item',
             columnWidth: '.masonry-item',
             percentPosition: true,
-            gutter: 8
+            gutter: 0
         });
 
         // Layout Masonry after images load
@@ -222,7 +222,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Add image to group
     function addImageToGroup(imageUrl, group) {
         const imageContainer = document.createElement('div');
-        imageContainer.className = 'image-container draggable';
+        imageContainer.className = 'image-container small-image draggable';
         imageContainer.draggable = true;
         imageContainer.setAttribute('data-image-url', imageUrl);
         imageContainer.innerHTML = `
@@ -251,7 +251,7 @@ document.addEventListener('DOMContentLoaded', () => {
             itemSelector: '.image-container',
             columnWidth: '.image-container',
             percentPosition: true,
-            gutter: 8
+            gutter: 0
         });
 
         // Layout Masonry after image loads

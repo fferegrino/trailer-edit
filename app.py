@@ -25,7 +25,11 @@ app.config["MAX_CONTENT_LENGTH"] = 500 * 1024 * 1024  # 500MB max file size
 
 def setup_folders(output_folder):
     if os.path.exists(output_folder):
-        shutil.rmtree(output_folder)
+        for root, dirs, files in os.walk(output_folder):
+            for file in files:
+                os.remove(os.path.join(root, file))
+            for dir in dirs:
+                shutil.rmtree(os.path.join(root, dir))
 
     folders = {
         "raw_inputs": Path(output_folder) / "raw_input",

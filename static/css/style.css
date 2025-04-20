@@ -36,11 +36,16 @@
     position: relative;
     width: 80px;
     height: 80px;
-    margin-bottom: 8px;
-    /* break-inside: avoid; */
-    border-radius: 0.25rem;
-    border: 1px solid #ccc;
+    /* border-radius: 0.25rem; */
+    border: 1px solid #f00;
     cursor: pointer;
+}
+
+
+.small-image {
+    width: 50px;
+    height: 50px;
+    margin-bottom: 4px;
 }
 
 .image-container img {
@@ -54,7 +59,7 @@
 .image-container .scene-id {
     position: absolute;
     top: 0;
-    background: black;
+    background: rgba(0, 0, 0, 0.5);
     color: white;
     line-height: 1em;
     padding: 2px;

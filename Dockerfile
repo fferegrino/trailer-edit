@@ -24,8 +24,6 @@ RUN uv sync
 
 COPY . .
 
-EXPOSE 5000
+EXPOSE 8081
 
-RUN mkdir -p /app/.output
-
-CMD ["uv", "run", "flask", "run", "--host=0.0.0.0", "--port=5000"]
+CMD ["uv", "run", "flask", "run", "--host=0.0.0.0", "--port=8081"]
