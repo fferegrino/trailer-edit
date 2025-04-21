@@ -5,8 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Image Grouping App</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <script src="https://unpkg.com/masonry-layout@4.2.2/dist/masonry.pkgd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
 </head>
 <body class="bg-gray-100">
     <div class="container mx-auto px-4 py-8">
@@ -50,6 +52,19 @@
     <script>
         // Pass existing groups to JavaScript
         window.existingGroups = {{ groups|tojson|safe }};
+
+        // Toast helper function
+        function showToast(message, type = 'success') {
+            const options = {
+                text: message,
+                duration: 3000,
+                gravity: "top",
+                position: "right",
+                backgroundColor: type === 'success' ? "#10B981" : "#EF4444",
+                stopOnFocus: true
+            };
+            Toastify(options).showToast();
+        }
     </script>
     <script src="{{ url_for('static', filename='js/app.js') }}"></script>
 

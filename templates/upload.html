@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Upload Video - Scene Selection</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
 </head>
 <body class="bg-gray-100">
     <div class="container mx-auto px-4 py-8">
@@ -41,6 +43,19 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
+            // Toast helper function
+            function showToast(message, type = 'success') {
+                const options = {
+                    text: message,
+                    duration: 3000,
+                    gravity: "top",
+                    position: "right",
+                    backgroundColor: type === 'success' ? "#10B981" : "#EF4444",
+                    stopOnFocus: true
+                };
+                Toastify(options).showToast();
+            }
+
             const form = document.getElementById('upload-form');
             const dropZone = document.getElementById('drop-zone');
             const fileInput = document.getElementById('video-input');
@@ -108,12 +123,14 @@
 
                     if (response.ok) {
                         const data = await response.json();
+                        showToast('Video uploaded successfully!', 'success');
                         window.location.href = '/scenes';
                     } else {
                         throw new Error('Upload failed');
                     }
                 } catch (error) {
                     progressText.textContent = 'Upload failed. Please try again.';
+                    showToast('Failed to upload video. Please try again.', 'error');
                     submitButton.disabled = false;
                 }
             });

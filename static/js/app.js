@@ -8,6 +8,19 @@ document.addEventListener('DOMContentLoaded', () => {
     let groups = [];
     let masonry;
 
+    // Toast helper function
+    function showToast(message, type = 'success') {
+        const options = {
+            text: message,
+            duration: 3000,
+            gravity: "top",
+            position: "right",
+            backgroundColor: type === 'success' ? "#10B981" : "#EF4444",
+            stopOnFocus: true
+        };
+        Toastify(options).showToast();
+    }
+
     // Modal functionality
     function openModal(imageUrl) {
         modalImage.src = imageUrl;
@@ -94,10 +107,12 @@ document.addEventListener('DOMContentLoaded', () => {
         group.element.querySelector('.delete-group').addEventListener('click', () => {
             group.element.remove();
             groups = groups.filter(g => g.id !== groupId);
+            showToast('Group deleted successfully', 'success');
         });
 
         group.element.querySelector('.download-group').addEventListener('click', () => {
             const groupName = group.element.querySelector('.group-name').value;
+            showToast('Downloading group...', 'success');
             window.location.href = `/download-group/${groupName}`;
         });
 
@@ -149,6 +164,7 @@ document.addEventListener('DOMContentLoaded', () => {
         .then(response => response.json())
         .then(data => {
             if (data.success) {
+                showToast('Groups saved successfully!', 'success');
                 // Show success feedback
                 saveGroupsButton.classList.add('bg-green-500');
                 saveGroupsButton.classList.remove('bg-blue-500');
@@ -156,11 +172,12 @@ document.addEventListener('DOMContentLoaded', () => {
                     saveGroupsButton.classList.remove('bg-green-500');
                     saveGroupsButton.classList.add('bg-blue-500');
                 }, 2000);
-
-                
             }
         })
-        .catch(error => console.error('Error:', error));
+        .catch(error => {
+            console.error('Error:', error);
+            showToast('Failed to save groups. Please try again.', 'error');
+        });
     });
 
     // Set up drag and drop for images in the gallery
