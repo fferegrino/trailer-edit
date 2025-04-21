@@ -19,6 +19,7 @@ from edit import extract_scenes
 
 app = Flask(__name__)
 
+__version__ = "0.1.0"
 OUTPUT_FOLDER = ".output"
 app.config["MAX_CONTENT_LENGTH"] = 500 * 1024 * 1024  # 500MB max file size
 

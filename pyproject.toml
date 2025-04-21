@@ -13,6 +13,7 @@ dependencies = [
 [dependency-groups]
 dev = [
     "black>=25.1.0",
+    "bump-my-version>=1.1.2",
     "isort>=6.0.1",
 ]
 
@@ -21,3 +22,12 @@ line-length = 120
 
 [tool.isort]
 profile = "black"
+
+[tool.bumpversion]
+current_version = "0.1.0"
+commit = true
+tag = true
+message = "Bump version: {current_version} → {new_version}"
+
+[[tool.bumpversion.files]]
+filename = "app.py"
