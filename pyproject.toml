@@ -28,6 +28,10 @@ current_version = "1.0.0"
 commit = true
 tag = true
 message = "Bump version: {current_version} → {new_version}"
+pre_commit_hooks = [
+    "uv sync",
+    "git add uv.lock",
+]
 
 [[tool.bumpversion.files]]
 filename = "app.py"
