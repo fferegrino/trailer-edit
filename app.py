@@ -148,5 +148,55 @@ def save_groups():
     return jsonify({"success": True})
 
 
+@app.route("/save-group", methods=["POST"])
+def save_group():
+    group = request.json
+    folders = app.config["FOLDERS"]
+
+    print(f"Saving group: {group['name']}")
+
+    group_id = group["id"]
+    group_name = group.get("name", f"Group {group_id}")
+    group_images = group["images"]
+
+    scenes = [
+        ffmpeg.input(os.path.join(folders["scene_videos"], f"{Path(image).stem}.mp4")) for image in group_images
+    ]
+
+    # Create a safe filename from the group name
+    safe_filename = "".join(c for c in group_name if c.isalnum() or c in (" ", "-", "_")).strip()
+    safe_filename = safe_filename.replace(" ", "_")
+    if not safe_filename:
+        safe_filename = f"group_{group_id}"
+
+    # Concatenate videos using ffmpeg
+    ffmpeg.concat(
+        *scenes,
+        v=1,
+        a=0,
+    ).output(
+        os.path.join(folders["generated_videos"], f"{safe_filename}.mp4"),
+    ).run(overwrite_output=True)
+
+    # Update groups.json
+    groups_file = folders["generated_videos"] / "groups.json"
+    groups = []
+    if os.path.exists(groups_file):
+        with open(groups_file, "r") as f:
+            groups = json.load(f)
+    
+    # Update or add the group
+    group_index = next((i for i, g in enumerate(groups) if g["id"] == group_id), -1)
+    if group_index >= 0:
+        groups[group_index] = group
+    else:
+        groups.append(group)
+    
+    with open(groups_file, "w") as f:
+        json.dump(groups, f, indent=2)
+
+    return jsonify({"success": True})
+
+
 if __name__ == "__main__":
     app.run(debug=True)

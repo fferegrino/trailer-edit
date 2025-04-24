@@ -101,7 +101,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 <button class="delete-group text-red-500 hover:text-red-700">Delete Group</button>
             </div>
             <div class="group-content min-h-[100px]"></div>
-            <button class="download-group text-green-500 hover:text-green-700">Download Group</button>
+            <button class="group-action-btn bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600">Save Group</button>
         `;
 
         group.element.querySelector('.delete-group').addEventListener('click', () => {
@@ -110,10 +110,40 @@ document.addEventListener('DOMContentLoaded', () => {
             showToast('Group deleted successfully', 'success');
         });
 
-        group.element.querySelector('.download-group').addEventListener('click', () => {
-            const groupName = group.element.querySelector('.group-name').value;
-            showToast('Downloading group...', 'success');
-            window.location.href = `/download-group/${groupName}`;
+        const actionButton = group.element.querySelector('.group-action-btn');
+        actionButton.addEventListener('click', () => {
+            if (actionButton.textContent === 'Save Group') {
+                const groupName = group.element.querySelector('.group-name').value;
+                const groupData = {
+                    id: group.id,
+                    name: groupName,
+                    images: group.images.map(img => img.getAttribute('data-image-url'))
+                };
+
+                fetch('/save-group', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(groupData)
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        showToast('Group saved successfully!', 'success');
+                        actionButton.textContent = 'Download Video';
+                        actionButton.classList.remove('bg-blue-500');
+                        actionButton.classList.add('bg-green-500');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    showToast('Failed to save group. Please try again.', 'error');
+                });
+            } else if (actionButton.textContent === 'Download Video') {
+                const groupName = group.element.querySelector('.group-name').value;
+                window.location.href = `/download-group/${groupName}`;
+            }
         });
 
         groups.push(group);
