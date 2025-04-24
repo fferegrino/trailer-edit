@@ -1,7 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
     const groupsContainer = document.getElementById('groups-container');
     const addGroupButton = document.getElementById('add-group');
-    const saveGroupsButton = document.getElementById('save-groups');
     const imageModal = document.getElementById('image-modal');
     const modalImage = document.getElementById('modal-image');
     const closeModal = document.getElementById('close-modal');
@@ -199,40 +198,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Add group button handler
     addGroupButton.addEventListener('click', () => createGroup());
-
-    // Save groups handler
-    saveGroupsButton.addEventListener('click', () => {
-        const groupsData = groups.map(group => ({
-            id: group.id,
-            name: group.element.querySelector('.group-name').value || `Group ${groups.indexOf(group) + 1}`,
-            images: group.images.map(img => img.getAttribute('data-image-url'))
-        }));
-
-        fetch('/save-groups', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(groupsData)
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                showToast('Groups saved successfully!', 'success');
-                // Show success feedback
-                saveGroupsButton.classList.add('bg-green-500');
-                saveGroupsButton.classList.remove('bg-blue-500');
-                setTimeout(() => {
-                    saveGroupsButton.classList.remove('bg-green-500');
-                    saveGroupsButton.classList.add('bg-blue-500');
-                }, 2000);
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            showToast('Failed to save groups. Please try again.', 'error');
-        });
-    });
 
     // Set up drag and drop for images in the gallery
     const galleryImages = document.querySelectorAll('#images-gallery .image-container');
