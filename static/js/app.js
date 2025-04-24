@@ -111,6 +111,30 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         const actionButton = group.element.querySelector('.group-action-btn');
+        const groupNameInput = group.element.querySelector('.group-name');
+
+        // Function to reset the button state
+        function resetButtonState() {
+            actionButton.textContent = 'Save Group';
+            actionButton.classList.remove('bg-green-500');
+            actionButton.classList.add('bg-blue-500');
+        }
+
+        // Reset button when group name changes
+        groupNameInput.addEventListener('input', resetButtonState);
+
+        // Reset button when images are added or removed
+        const groupContent = group.element.querySelector('.group-content');
+        const observer = new MutationObserver((mutations) => {
+            mutations.forEach((mutation) => {
+                if (mutation.type === 'childList') {
+                    resetButtonState();
+                }
+            });
+        });
+
+        observer.observe(groupContent, { childList: true });
+
         actionButton.addEventListener('click', () => {
             if (actionButton.textContent === 'Save Group') {
                 const groupName = group.element.querySelector('.group-name').value;
