@@ -1,6 +1,6 @@
 [project]
 name = "trailer-edit"
-version = "1.0.1"
+version = "1.0.2"
 description = "Add your description here"
 readme = "readme.md"
 requires-python = ">=3.10"
@@ -24,7 +24,7 @@ line-length = 120
 profile = "black"
 
 [tool.bumpversion]
-current_version = "1.0.1"
+current_version = "1.0.2"
 commit = true
 tag = true
 message = "Bump version: {current_version} → {new_version}"
